@@ -142,7 +142,7 @@ input {
 }
 .adjust,
 .number {
-    font-size: 2rem;
+    font-size: 2.4rem;
     border-radius: 1rem;
     border-style: none;
     background-color: white;
@@ -164,5 +164,8 @@ input {
 }
 #multiply p {
     transform: rotate(45deg);
-    font-size: 3.4rem;
+    font-size: 3.2rem;
+}
+#minus {
+    font-size: 3.2rem;
 }
