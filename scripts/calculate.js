@@ -3,60 +3,96 @@ const display = document.querySelector("#display");
 const buttons = document.querySelectorAll("button");
 
 for(let i = 0; i < buttons.length ; i++) {
-    buttons[i].addEventListener('click', receiveInput)
+    buttons[i].addEventListener('click', select)
     };
 /* MAIN VARIABLES */
-let numberOne = [];
-let numberTwo = [];
-let calculate = "none"
+let nO = [];
+let nT = [];
+let calcFunc = "none"
 
-function receiveInput(e) {
+/* START */
+function select(e) {
     let buttonValue =  e.target.getAttribute('value');
     let buttonClass =  e.target.getAttribute('class');
     if (buttonClass == "number") {
-    changeNumber(buttonValue);    
+    writeArray(buttonValue);    
     }
-    else if (numberOne.length) {
-        console.log("We hebben een nummer");
+    else if (nO.length) {
         if (buttonClass == "adjust") {
             doAdjust(buttonValue);
+            console.log(`We hebben een nummer, dus ${buttonValue}`);
+
         }
         if (buttonClass == "calculate") {
             doCalculate(buttonValue);
+            console.log(`We hebben een nummer, dus ${buttonValue}`);
+
         }
     }
 }
 
-function changeNumber(inputValue) {
-    function writeArray(inputValue, myArray) {
-        if (inputValue === "." && (myArray.findIndex(dot => dot === ".")) !== -1) {
+
+function writeArray(inputValue) {
+    let currentNumber;
+    if (calcFunc == "none") {
+        currentNumber = [...nO];
+        nO = write(currentNumber);
+        console.log("Write one", nO);
+    } else {
+        currentNumber = [...nT];
+        nT = write(currentNumber);
+        console.log("Write two", nT);
+    }
+    function write(inputNumber) {
+        if (inputValue === "." && (inputNumber.findIndex(dot => dot === ".")) !== -1) {
             console.log("er staat al een punt");
         } else {
-        myArray.push(inputValue);
-        let currentNumber  = myArray.join('');
-        display.value = currentNumber;
-        let test = parseFloat(myArray.join(''));
-        console.log(test); 
+            inputNumber.push(inputValue);
+            return inputNumber;
         }
     }
-    if (calculate == "none") {
-        writeArray(inputValue, numberOne);
-        console.log("one", numberOne)
-    } else {
-        writeArray(inputValue, numberTwo);
-        console.log("two", numberTwo)
-    }
-   /* SHOW NUMBER */
-    
+    showNumber(currentNumber);
+    currentNumber = [];
 }
-function doAdjust(inputValue) {
+function showNumber(inputArray) {
+    /* What is postion dot */
+    let displayArray = [...inputArray];
+    let i;
+    if (displayArray.indexOf(".") === -1) {
+        i = displayArray.length;
+    } else {
+        i = displayArray.indexOf(".");
+        /* Insert comma at instead of dot */
+        displayArray.splice(i, 1, ",");
+    }
+    let dots = [];
+    let start;
+    console.log("Wel of niet een -", displayArray[0]);
+    if (displayArray[0] === "-") {
+        start = 1
+    } else {start = 0};
+    for (let t = 0; t < i - start; t++) {
+        if (t!== 0 && ((i -t - start) % 3) === 0) {
+            dots.push(t + start);
+        }
+    } 
+    /* Insert dots at each 1000 */
+    let count = 0;
+    for (let x = 0; x < dots.length; x++) {
+        displayArray.splice((dots[x] + count), 0, ".");
+        count++
+    }
+    /* console.log("output", displayArray); */
+    display.value = displayArray.join('');
+}
+function doAdjust(inputValue) {   
     switch(inputValue) {
         case "clear":
             console.log("clear");
             doClear();
         break;
         case "sign":
-            console.log("sign");
+            doSign();
         break;
         case "percentage":
             console.log("percentage");
@@ -65,43 +101,44 @@ function doAdjust(inputValue) {
             break;
     }
     function doClear() {
-        numberOne = [];
-        numberTwo = [];
-        calculate = "none";
+        nO = [];
+        nT = [];
+        calcFunc = "none";
         display.value = 0;
+    }
+    function doSign() {
+        console.log("start doSign")
+        let changeNumber = [];  
+        if (nT.length === 0) {
+            changeNumber = nO;
+            console.log("doSign one")
+        } else {
+            changeNumber = nT;
+            console.log("doSign two")
+        }
+        if (changeNumber[0] == "-") {
+            console.log(changeNumber[0], "haal de min eraf");
+            changeNumber.shift();
+        } else {
+            console.log(changeNumber[0], "Doe een - erbij");
+            changeNumber.unshift("-");
+        }
+        console.log(changeNumber);
+        showNumber(changeNumber);
+    }
+    function doPercentage() {
+        console.log("doPercentage")
     }
 }
 function doCalculate(inputValue) {
-    if (numberTwo.length) {
+    if (nT.length) {
         /* doCalcFunction 
             nextCalc ??? */
-    } else if (inputValue != "return") {
-        calculate = inputValue;
-        console.log(calculate);
+    } else if (inputValue !== "return") {
+        calcFunc = inputValue;
+        console.log(calcFunc);
     }
 }
 
-function showNumber (inputArray) {
-    let displayNumber = inputArray;
-    let i = displayNumber.findIndex(dot => dot === ".");
-    if (i == -1) {
-        i = displayNumber.length;
-        console.log(i, "geen punt hoor");
 
-    }
-    else {
-        displayNumber.splice(i, 1, ",");
-        console.log(`er staat een punt op index ${i}`, displayNumber)
-
-    }
-    for (t = 0; t < i; t++) {
-        if ((i - t) % 3 === 0) {
-            displayNumber.splice(t, 0, ".");
-            console.log("tafel van drie op", t, i);
-        }
-    }
-    display.value = displayNumber.join('');
-    displayNumber = [];
-    
-}
 
