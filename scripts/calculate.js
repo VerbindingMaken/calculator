@@ -9,6 +9,7 @@ for(let i = 0; i < buttons.length ; i++) {
 let nO = [];
 let nT = [];
 let calcFunc = "none"
+nextCalc = 1;
 
 /* START */
 function select(e) {
@@ -23,7 +24,10 @@ function select(e) {
             doAdjust(buttonValue);
         }
         if (buttonClass == "calculate") {
-            console.log(`We hebben een nummer, dus ${buttonValue}`);
+            if (nextCalc) {
+                e.target.classList.add('highlight');
+            }
+            console.log(`We hebben een nummer en nextCalc is ${nextCalc}, dus ${buttonValue}`);
             doCalculate(buttonValue);           
         }
     }
@@ -144,7 +148,6 @@ function doAdjust(inputValue) {
     }
 }
 function doCalculate(inputValue) {
-    let nextCalc = "none"
     if (nT.length === 0) {
         if (inputValue === "return") {
             calcFunc = "none";
@@ -152,7 +155,7 @@ function doCalculate(inputValue) {
             return;
         } else {
             calcFunc = inputValue;
-            console.log("Adjust", calcFunc);
+            nextCalc = 1;
             return;
         }
     }

@@ -36,7 +36,7 @@ div  {
     align-items: center;
     min-width: 40rem;
     min-height: 61rem;
-    background-color: darkblue;
+    background-color: #222;
     border-radius: 1rem;
 }
 #calc-display-buttons {
@@ -149,7 +149,7 @@ input {
     font-weight: 600;
 }
 .adjust {
-    opacity: 0.5;
+    opacity: 0.6;
 }
 .number {
     opacity: .8;
@@ -164,4 +164,10 @@ input {
 }
 #minus {
     font-size: 3.2rem;
+}
+button:hover {
+    opacity: 0.95;
+}
+.highlight {
+    opacity: 0.95;
 }
