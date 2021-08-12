@@ -17,7 +17,7 @@ function select(e) {
     if (buttonClass == "number") {
     writeArray(buttonValue);    
     }
-    else if (nO.length) {
+    else if (nO.length || buttonValue === "clear") {
         if (buttonClass == "adjust") {
             console.log(`We hebben een nummer, dus ${buttonValue}`);
             doAdjust(buttonValue);
@@ -44,6 +44,7 @@ function writeArray(inputValue) {
     function write(inputNumber) {
         if (inputValue === "." && (inputNumber.findIndex(dot => dot === ".")) !== -1) {
             console.log("er staat al een punt");
+            return inputNumber;
         } else {
             inputNumber.push(inputValue);
             return inputNumber;
@@ -60,7 +61,7 @@ function showNumber(inputArray) {
         i = displayArray.length;
     } else {
         i = displayArray.indexOf(".");
-        /* Insert comma at instead of dot */
+        /* Insert comma at instead of dot */        
         displayArray.splice(i, 1, ",");
     }
     let dots = [];
@@ -86,32 +87,34 @@ function showNumber(inputArray) {
 function doAdjust(inputValue) {
     console.log(nT); 
     if (inputValue === "clear") {
-        doClear()
-    }   else {
-        checkNumber(inputValue);
-    }       
-    function doClear() {
         nO = [];
         nT = [];
         calcFunc = "none";
         display.value = 0;
+        return;
+    }   else {
+        checkNumber(inputValue);
+    }       
+    function doClear() {
+
     }
     function checkNumber() {
-        let changeNumber = [];  
+        let changeNumber = [];
+        let changeNumberName;
         if (nT.length === 0) {
-            changeNumber = nO;
-            console.log("doSign one")
+            changeNumber = [...nO];
+            changeNumberName = "O";
         } else {
-            changeNumber = nT;
-            console.log("doSign two")
+            changeNumber = [...nT];
+            changeNumberName = "T";
         }
         if (inputValue === "sign") {
-            doSign(changeNumber);
+            return doSign(changeNumber, changeNumberName);
         } else if (inputValue === "percentage") {
-             doPercentage(changeNumber);
+            return doPercentage(changeNumber, changeNumberName);
         }
     }
-    function doSign(changeNumber) {
+    function doSign(changeNumber, changeNumberName) {
         console.log("start doSign")
         if (changeNumber[0] == "-") {
             console.log(changeNumber[0], "haal de min eraf");
@@ -120,15 +123,23 @@ function doAdjust(inputValue) {
             console.log(changeNumber[0], "Doe een - erbij");
             changeNumber.unshift("-");
         }
-        console.log(changeNumber);
+        if (changeNumberName === "O") {
+            nO = [...changeNumber];
+        } else if (changeNumberName === "T") {
+            nT = [...changeNumber];
+        }
         return showNumber(changeNumber);
     }
-    function doPercentage(changeNumber) {
-        let calcNumber = [...changeNumber];
-        let hundert = (parseFloat(calcNumber.join(''))) / 100;
-        changeNumber = String(hundert).split('');
-        console.log("doPercentage", hundert, changeNumber);
-        console.log("nummer 1", nO);
+    function doPercentage(changeNumber, changeNumberName) {
+        toNumber = [...changeNumber];
+        let percent = (parseFloat(toNumber.join(''))) / 100;
+        changeNumber = String(percent).split('');
+        console.log("doPercentage", percent, changeNumber);
+        if (changeNumberName === "O") {
+            nO = [...changeNumber];
+        } else if (changeNumberName === "T") {
+            nT = [...changeNumber];
+        }
         return showNumber(changeNumber);
     }
 }
@@ -166,7 +177,19 @@ function doCalculate(inputValue) {
         default:
             break;
     }
-    nO = String(resultNumber).split('');
+    resultArray = String(resultNumber).split('');
+    if (resultArray.indexOf(".") !== -1) {
+        i = resultArray.indexOf(".");
+        let start = i + 1
+        for (let t = start; t < resultArray.length; t++){
+            if (resultArray[t] !== 0) {
+                i = t + 1;
+                deleteZeros(i);
+            }
+        }
+        resultArray.splice(i, (resultArray.length - i));
+    }
+    nO = [...resultArray];
     nT = [];
     if (inputValue === "return") {
         calcFunc = "none";
@@ -175,6 +198,20 @@ function doCalculate(inputValue) {
     }
     return showNumber(nO);
 }
+/*  let i = index van comma 
+    let start = i + 1 */
+
+function deleteZeros(start) {
+    for (let t = start; t < mijnLijst.length; t++){
+        if (mijnLijst[t] !== 0) {
+            i = t + 1;
+            return deleteZeros(i);
+        }
+    }
+    mijnLijst.splice(i, (mijnLijst.length - i));
+    return mijnLijst;
+}
+mijnLijst = [1, 2, ".", 3, 0, 3, 0, 0, 0]
 
 
 
