@@ -19,14 +19,12 @@ function select(e) {
     }
     else if (nO.length) {
         if (buttonClass == "adjust") {
-            doAdjust(buttonValue);
             console.log(`We hebben een nummer, dus ${buttonValue}`);
-
+            doAdjust(buttonValue);
         }
         if (buttonClass == "calculate") {
-            doCalculate(buttonValue);
             console.log(`We hebben een nummer, dus ${buttonValue}`);
-
+            doCalculate(buttonValue);           
         }
     }
 }
@@ -85,29 +83,20 @@ function showNumber(inputArray) {
     /* console.log("output", displayArray); */
     display.value = displayArray.join('');
 }
-function doAdjust(inputValue) {   
-    switch(inputValue) {
-        case "clear":
-            console.log("clear");
-            doClear();
-        break;
-        case "sign":
-            doSign();
-        break;
-        case "percentage":
-            console.log("percentage");
-        break;
-        default:
-            break;
-    }
+function doAdjust(inputValue) {
+    console.log(nT); 
+    if (inputValue === "clear") {
+        doClear()
+    }   else {
+        checkNumber(inputValue);
+    }       
     function doClear() {
         nO = [];
         nT = [];
         calcFunc = "none";
         display.value = 0;
     }
-    function doSign() {
-        console.log("start doSign")
+    function checkNumber() {
         let changeNumber = [];  
         if (nT.length === 0) {
             changeNumber = nO;
@@ -116,6 +105,14 @@ function doAdjust(inputValue) {
             changeNumber = nT;
             console.log("doSign two")
         }
+        if (inputValue === "sign") {
+            doSign(changeNumber);
+        } else if (inputValue === "percentage") {
+             doPercentage(changeNumber);
+        }
+    }
+    function doSign(changeNumber) {
+        console.log("start doSign")
         if (changeNumber[0] == "-") {
             console.log(changeNumber[0], "haal de min eraf");
             changeNumber.shift();
@@ -124,21 +121,61 @@ function doAdjust(inputValue) {
             changeNumber.unshift("-");
         }
         console.log(changeNumber);
-        showNumber(changeNumber);
+        return showNumber(changeNumber);
     }
-    function doPercentage() {
-        console.log("doPercentage")
+    function doPercentage(changeNumber) {
+        let calcNumber = [...changeNumber];
+        let hundert = (parseFloat(calcNumber.join(''))) / 100;
+        changeNumber = String(hundert).split('');
+        console.log("doPercentage", hundert, changeNumber);
+        console.log("nummer 1", nO);
+        return showNumber(changeNumber);
     }
 }
 function doCalculate(inputValue) {
-    if (nT.length) {
-        /* doCalcFunction 
-            nextCalc ??? */
-    } else if (inputValue !== "return") {
-        calcFunc = inputValue;
-        console.log(calcFunc);
+    let nextCalc = "none"
+    if (nT.length === 0) {
+        if (inputValue === "return") {
+            calcFunc = "none";
+            console.log("Adjust", calcFunc)
+            return;
+        } else {
+            calcFunc = inputValue;
+            console.log("Adjust", calcFunc);
+            return;
+        }
     }
+    console.log("we kunnen rekenen!");
+    function makeNumber(inputArray) {
+        return parseFloat(inputArray.join(''));
+    }
+    let resultNumber;
+    switch(calcFunc) {
+        case "divide":
+            resultNumber = (makeNumber(nO) / makeNumber(nT));
+        break;
+        case "multiply":
+            resultNumber = ("doMultiply", makeNumber(nO) * makeNumber(nT));
+        break;
+        case "plus":
+            resultNumber = ("doPlus", makeNumber(nO) + makeNumber(nT));
+        break;
+        case "minus":
+            resultNumber = ("doMinus", makeNumber(nO) - makeNumber(nT));
+        break;
+        default:
+            break;
+    }
+    nO = String(resultNumber).split('');
+    nT = [];
+    if (inputValue === "return") {
+        calcFunc = "none";
+    } else {
+        calcFunc = inputValue;
+    }
+    return showNumber(nO);
 }
+
 
 
 

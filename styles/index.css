@@ -162,10 +162,6 @@ input {
     opacity: 0.6;
     font-weight: 600;
 }
-#multiply p {
-    transform: rotate(45deg);
-    font-size: 3.2rem;
-}
 #minus {
     font-size: 3.2rem;
 }
