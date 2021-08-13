@@ -25,10 +25,10 @@ function select(e) {
         }
         if (buttonClass == "calculate") {
             if (nextCalc) {
-                e.target.classList.add('highlight');
+                /* e.target.classList.add('highlight'); DEZE WERKT */
             }
             console.log(`We hebben een nummer en nextCalc is ${nextCalc}, dus ${buttonValue}`);
-            doCalculate(buttonValue);           
+            doCalculate(buttonValue, e);           
         }
     }
 }
@@ -147,7 +147,11 @@ function doAdjust(inputValue) {
         return showNumber(changeNumber);
     }
 }
-function doCalculate(inputValue) {
+function doCalculate(inputValue, e) {
+    let highLightedButton = document.querySelector(".highlight")
+    if (highLightedButton) {
+        highLightedButton.className = "calculate";
+    }
     if (nT.length === 0) {
         if (inputValue === "return") {
             calcFunc = "none";
@@ -156,12 +160,15 @@ function doCalculate(inputValue) {
         } else {
             calcFunc = inputValue;
             nextCalc = 1;
+            e.target.classList.add('highlight');
             return;
         }
     }
     console.log("we kunnen rekenen!");
     function makeNumber(inputArray) {
         return parseFloat(inputArray.join(''));
+    /* Remove Higlight */
+
     }
     let resultNumber;
     switch(calcFunc) {
@@ -198,6 +205,7 @@ function doCalculate(inputValue) {
         calcFunc = "none";
     } else {
         calcFunc = inputValue;
+        e.target.classList.add('highlight');
     }
     return showNumber(nO);
 }
